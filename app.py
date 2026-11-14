@@ -53,9 +53,14 @@ elif page == "📊 PSI Experiment Database":
         
         st.subheader("Flow Parameters Visualization")
         if 'mfuel (mg/s)' in df.columns and 'mtot (mg/s)' in df.columns:
-            df_plot = df[(df['mfuel (mg/s)'] != 'RAMPED') & (df['mtot (mg/s)'] != 'RAMPED')].copy()
-            df_plot['mfuel (mg/s)'] = pd.to_numeric(df_plot['mfuel (mg/s)'])
-            df_plot['mtot (mg/s)'] = pd.to_numeric(df_plot['mtot (mg/s)'])
+            df_plot = df.copy()
+            # Wymuszamy konwersję na liczby. Wszystko co jest tekstem (RAMP, RAMPED itp.) staje się NaN (puste)
+            df_plot['mfuel (mg/s)'] = pd.to_numeric(df_plot['mfuel (mg/s)'], errors='coerce')
+            df_plot['mtot (mg/s)'] = pd.to_numeric(df_plot['mtot (mg/s)'], errors='coerce')
+            
+            # Usuwamy puste wiersze, żeby wykres dostał same czyste liczby
+            df_plot = df_plot.dropna(subset=['mfuel (mg/s)', 'mtot (mg/s)'])
+            
             st.scatter_chart(data=df_plot, x='mfuel (mg/s)', y='mtot (mg/s)')
             
     except Exception as e:
