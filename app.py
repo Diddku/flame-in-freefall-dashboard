@@ -51,17 +51,21 @@ elif page == "📊 PSI Experiment Database":
                 df = df[df['Fuel'] == selected_fuel]
         st.dataframe(df, use_container_width=True)
         
-        st.subheader("Flow Parameters Visualization")
-        if 'mfuel (mg/s)' in df.columns and 'mtot (mg/s)' in df.columns:
+        st.subheader("Thermodynamics: Temperature vs. Pressure")
+        if 'pmean (atm)' in df.columns and 'Tad (K)' in df.columns:
             df_plot = df.copy()
-            # Wymuszamy konwersję na liczby. Wszystko co jest tekstem (RAMP, RAMPED itp.) staje się NaN (puste)
-            df_plot['mfuel (mg/s)'] = pd.to_numeric(df_plot['mfuel (mg/s)'], errors='coerce')
-            df_plot['mtot (mg/s)'] = pd.to_numeric(df_plot['mtot (mg/s)'], errors='coerce')
             
-            # Usuwamy puste wiersze, żeby wykres dostał same czyste liczby
-            df_plot = df_plot.dropna(subset=['mfuel (mg/s)', 'mtot (mg/s)'])
+            # Wymuszamy konwersję na liczby i czyścimy teksty (np. 'RAMP' w kolumnach)
+            df_plot['pmean (atm)'] = pd.to_numeric(df_plot['pmean (atm)'], errors='coerce')
+            df_plot['Tad (K)'] = pd.to_numeric(df_plot['Tad (K)'], errors='coerce')
             
-            st.scatter_chart(data=df_plot, x='mfuel (mg/s)', y='mtot (mg/s)')
+            # Usuwamy puste wiersze
+            df_plot = df_plot.dropna(subset=['pmean (atm)', 'Tad (K)'])
+            
+            # Rysujemy profesjonalny wykres (Oś X: Ciśnienie, Oś Y: Temperatura)
+            st.scatter_chart(data=df_plot, x='pmean (atm)', y='Tad (K)')
+        else:
+            st.warning("⚠️ Brak kolumn ciśnienia lub temperatury do wygenerowania wykresu.")
             
     except Exception as e:
         st.error(f"Data loading error: Upewnij się, że plik '{file_to_load}' znajduje się w folderze projektu! Szczegóły: {e}")
