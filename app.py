@@ -39,6 +39,9 @@ elif page == "📊 PSI Experiment Database":
         # Wczytujemy plik
         df = pd.read_csv(file_to_load, sep=",")
         
+        # MAGICZNA LINIJKA: Usuwa złośliwe, ukryte spacje z nazw wszystkich kolumn
+        df.columns = df.columns.str.strip()
+        
         # 3. Dynamiczna informacja dla Jury NASA wyświetlana w zależności od pliku
         if "inverse" in file_to_load:
             st.info("💡 **Inverse Diffusion Flame (IDF) Data:** In this experiment, the oxidizer (oxygen) is injected into a fuel-rich environment. NASA studies IDF in microgravity to cleanly isolate soot formation and carbon particulate emissions without the interference of buoyancy-induced flickering.")
@@ -51,21 +54,39 @@ elif page == "📊 PSI Experiment Database":
                 df = df[df['Fuel'] == selected_fuel]
         st.dataframe(df, use_container_width=True)
         
+        # --- DYNAMICZNE ROZPOZNAWANIE KOLUMN (Etylen vs Etan) ---
+        p_col = 'pmean (atm)' if 'pmean (atm)' in df.columns else 'approx p (bar)' if 'approx p (bar)' in df.columns else None
+        o2_col = 'XO2 (init)' if 'XO2 (init)' in df.columns else 'XO2 before test' if 'XO2 before test' in df.columns else None
+
         st.subheader("Thermodynamics: Temperature vs. Pressure")
-        if 'pmean (atm)' in df.columns and 'Tad (K)' in df.columns:
+        if p_col and 'Tad (K)' in df.columns:
             df_plot = df.copy()
-            
-            # Wymuszamy konwersję na liczby i czyścimy teksty (np. 'RAMP' w kolumnach)
-            df_plot['pmean (atm)'] = pd.to_numeric(df_plot['pmean (atm)'], errors='coerce')
+            df_plot[p_col] = pd.to_numeric(df_plot[p_col], errors='coerce')
             df_plot['Tad (K)'] = pd.to_numeric(df_plot['Tad (K)'], errors='coerce')
-            
-            # Usuwamy puste wiersze
-            df_plot = df_plot.dropna(subset=['pmean (atm)', 'Tad (K)'])
-            
-            # Rysujemy profesjonalny wykres (Oś X: Ciśnienie, Oś Y: Temperatura)
-            st.scatter_chart(data=df_plot, x='pmean (atm)', y='Tad (K)')
+            df_plot = df_plot.dropna(subset=[p_col, 'Tad (K)'])
+            st.scatter_chart(data=df_plot, x=p_col, y='Tad (K)')
         else:
             st.warning("⚠️ Brak kolumn ciśnienia lub temperatury do wygenerowania wykresu.")
+
+        st.subheader("Combustion Dynamics: Oxygen Concentration vs. Temperature")
+        if o2_col and 'Tad (K)' in df.columns:
+            df_ox = df.copy()
+            df_ox[o2_col] = pd.to_numeric(df_ox[o2_col], errors='coerce')
+            df_ox['Tad (K)'] = pd.to_numeric(df_ox['Tad (K)'], errors='coerce')
+            df_ox = df_ox.dropna(subset=[o2_col, 'Tad (K)'])
+            st.scatter_chart(data=df_ox, x=o2_col, y='Tad (K)')
+        else:
+            st.info("⚠️ Brak kolumn stężenia tlenu do wygenerowania wykresu.")
+
+        st.subheader("Combustion Dynamics: Oxygen Concentration vs. Pressure")
+        if o2_col and p_col:
+            df_stab = df.copy()
+            df_stab[o2_col] = pd.to_numeric(df_stab[o2_col], errors='coerce')
+            df_stab[p_col] = pd.to_numeric(df_stab[p_col], errors='coerce')
+            df_stab = df_stab.dropna(subset=[o2_col, p_col])
+            st.scatter_chart(data=df_stab, x=o2_col, y=p_col)
+        else:
+            st.info("⚠️ Brak kolumn stężenia tlenu do wygenerowania wykresu.")
             
     except Exception as e:
         st.error(f"Data loading error: Upewnij się, że plik '{file_to_load}' znajduje się w folderze projektu! Szczegóły: {e}")
