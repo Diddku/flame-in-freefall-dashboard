@@ -13,7 +13,7 @@ except Exception as e:
 st.set_page_config(page_title="Flame in Freefall | SI Dashboard", page_icon="🔥", layout="wide")
 
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Select Module:", ["🏠 Home", "📊 PSI Experiment Database", "🤖 AI Assistant (Insights)", "🌪️ CFD Analysis (0g vs 1g)"])
+page = st.sidebar.radio("Select Module:", ["🏠 Home", "📊 PSI Experiment Database", "💡 SI Assistant", "🌪️ CFD Analysis"])
 
 if page == "🏠 Home":
     st.title("🔥 Flame in Freefall: Spacecraft Fire Safety Dashboard")
@@ -91,7 +91,7 @@ elif page == "📊 PSI Experiment Database":
     except Exception as e:
         st.error(f"Data loading error: Upewnij się, że plik '{file_to_load}' znajduje się w folderze projektu! Szczegóły: {e}")
 
-elif page == "🤖 AI Assistant (Insights)":
+elif page == "💡 SI Assistant":
     st.title("Spacecraft Fire Safety AI Assistant")
     st.write("Ask a question regarding flame behavior, material flammability, or the PSI-10 data. The AI will analyze the loaded knowledge base and raw experimental data.")
     
@@ -145,7 +145,7 @@ elif page == "🤖 AI Assistant (Insights)":
                 except Exception as e:
                     st.error(f"AI Generation Error: {e}")
 
-elif page == "🌪️ CFD Analysis (0g vs 1g)":
+elif page == "🌪️ CFD Analysis":
     st.title("CFD Simulations: Gravity Effects on Combustion")
     st.markdown("""
     Comparison of 2D axisymmetric combustion simulations performed in **Ansys Fluent**. 
