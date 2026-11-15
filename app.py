@@ -92,7 +92,7 @@ elif page == "📊 PSI Experiment Database":
         st.error(f"Data loading error: Upewnij się, że plik '{file_to_load}' znajduje się w folderze projektu! Szczegóły: {e}")
 
 elif page == "💡 SI Assistant":
-    st.title("Spacecraft Fire Safety AI Assistant")
+    st.title("Spacecraft Fire Safety SI Assistant")
     st.write("Ask a question regarding flame behavior, material flammability, or the PSI-10 data. The AI will analyze the loaded knowledge base and raw experimental data.")
     
     user_query = st.text_area("Enter your question (e.g., 'How does a 30% oxygen concentration affect flames?'):")
