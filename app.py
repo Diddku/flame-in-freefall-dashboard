@@ -56,7 +56,7 @@ elif page == "📊 PSI Experiment Database":
         
         # --- DYNAMICZNE ROZPOZNAWANIE KOLUMN (Etylen vs Etan) ---
         p_col = 'pmean (atm)' if 'pmean (atm)' in df.columns else 'approx p (bar)' if 'approx p (bar)' in df.columns else None
-        o2_col = 'XO2 (init)' if 'XO2 (init)' in df.columns else 'XO2 before test' if 'XO2 before test' in df.columns else None
+        o2_col = 'XO2 (init)' if 'XO2 (init)' in df.columns else 'XO2 before test' if 'XO2 before test' in df.columns else 'XO2' if 'XO2' in df.columns else None
 
         st.subheader("Thermodynamics: Temperature vs. Pressure")
         if p_col and 'Tad (K)' in df.columns:
