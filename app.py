@@ -22,7 +22,7 @@ if page == "🏠 Home":
     """)
 
 elif page == "📊 PSI Experiment Database":
-    st.title("Data Explorer: Normal vs Inverse Flames")
+    st.title("Data Explorer")
     
     # 1. Zaktualizowane menu z odwrotnymi płomieniami (Inverse Flames)
     dataset_choice = st.selectbox("Select experimental dataset:", [
